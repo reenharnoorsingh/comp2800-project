@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://C:/Jars4Java3D" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://C:/Jars4Java3D/java3d-javadocs-all" />
+        </JAVADOC>
+        <SOURCES />
+        <jarDirectory url="file://C:/Jars4Java3D" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
