@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Jars4Java3D">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../../../Jars4Java3D" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/../../../../Jars4Java3D/java3d-javadocs-all" />
+    </JAVADOC>
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../../Jars4Java3D" recursive="false" />
+  </library>
+</component>
