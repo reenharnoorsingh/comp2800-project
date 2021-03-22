@@ -78,7 +78,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
 
 
         Appearance app=new Appearance();
-        app.setTexture(texturedApp("C:\\Users\\Shubham\\Desktop\\road2.png"));
+        app.setTexture(texturedApp("road2.png"));
         PolygonAttributes pa=new PolygonAttributes();
         pa.setCullFace(PolygonAttributes.CULL_NONE);
         app.setPolygonAttributes(pa);
