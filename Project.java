@@ -1,4 +1,3 @@
-package CodesSM280;
 
 
 /* *********************************************************
@@ -116,7 +115,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         TransformGroup pole=new TransformGroup();
 
         Appearance app=new Appearance();
-        app.setMaterial(setMaterial(CommonsSM.Grey));
+        app.setMaterial(setMaterial(Commons.Grey));
         Cylinder bot=new Cylinder(0.1f,1f,app);
         Cylinder top=new Cylinder(0.1f,1f,app);
 
@@ -192,7 +191,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         BranchGroup sceneBG = new BranchGroup();
         sceneBG.addChild(Road());
         sceneBG.addChild(LightPoles());
-        sceneBG.addChild(addBackground(CommonsSM.Grey, new BoundingSphere()));	///add Background
+        sceneBG.addChild(addBackground(Commons.Grey, new BoundingSphere()));	///add Background
         pickTool = new PickTool( sceneBG );                   // allow picking of objs in 'sceneBG'
         pickTool.setMode(PickTool.BOUNDS);
 
@@ -207,10 +206,10 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         canvas.addKeyListener(this);
 
         SimpleUniverse su = new SimpleUniverse(canvas);       // create a SimpleUniverse
-        CommonsSM.setEye(new Point3d(0, 1, 5.0));
-        CommonsSM.defineViewer(su);                           // set the viewer's location
+        Commons.setEye(new Point3d(0, 1, 5.0));
+        Commons.defineViewer(su);                           // set the viewer's location
 
-        addLights(sceneBG, CommonsSM.White);
+        addLights(sceneBG, Commons.White);
 
         sceneBG.compile();
         su.addBranchGraph(sceneBG);                           // attach the scene to SimpleUniverse
