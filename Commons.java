@@ -2,10 +2,6 @@
  * For use by students to work on assignments and project.
  * Permission required material. Contact: xyuan@uwindsor.ca
  **********************************************************/
-/* *********************************************************
- * Changes made by Harnoor Singh Reen, 110006294
- * Contact: reen@uwindsor.ca
- **********************************************************/
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 import javax.swing.JFrame;
