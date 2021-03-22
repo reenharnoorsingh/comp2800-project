@@ -1,9 +1,12 @@
-
-
-/* *********************************************************
- * For use by students to work on assignments and project.
- * Permission required material. Contact: xyuan@uwindsor.ca
- **********************************************************/
+/*
+Group Project COMP-2800
+Members:
+        Harnoor Singh Reen - 110006294
+        Shubham Mehta -
+        Bill Shema -
+        Ariya Rasekh
+        Vaishnavi Alhuwalia -
+ */
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -45,7 +48,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
 
     private static Background addBackground(Color3f clr, BoundingSphere sphere){
         Background bg=new Background();//create a background
-        bg.setImage(new TextureLoader("C:\\Users\\Shubham\\Desktop\\sunset2.jpg",null).getImage());//load image
+        bg.setImage(new TextureLoader("images/sunset2.jpg",null).getImage());//load image
         bg.setImageScaleMode(Background.SCALE_FIT_ALL);//set scaling
         bg.setApplicationBounds(sphere);//setting bounds
         bg.setColor(clr);//setting color
@@ -78,7 +81,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
 
 
         Appearance app=new Appearance();
-        app.setTexture(texturedApp("road2.png"));
+        app.setTexture(texturedApp("images/road2.png"));
         PolygonAttributes pa=new PolygonAttributes();
         pa.setCullFace(PolygonAttributes.CULL_NONE);
         app.setPolygonAttributes(pa);
@@ -249,15 +252,15 @@ public class Project extends JPanel implements MouseListener, KeyListener {
             if ((int) box.getUserData() == 0) {               // retrieve 'UserData'
                 String s=box.getName();                 // we idnetify the sphere from its name
                 if(s=="Sun")    //if the biggest sphere
-                    app.setTexture(texturedApp("C:\\Users\\Shubham\\Desktop\\Files4Assign4\\sun.jpg"));
+                    app.setTexture(texturedApp("images/sun.jpg"));
                 else if(s=="Earth") // if the medium sphere
-                    app.setTexture(texturedApp("C:\\Users\\Shubham\\Desktop\\Files4Assign4\\earth.jpg"));
+                    app.setTexture(texturedApp("images/earth.jpg"));
                 else    // if the smallest sphere
-                    app.setTexture(texturedApp("C:\\Users\\Shubham\\Desktop\\Files4Assign4\\moon.jpg"));
+                    app.setTexture(texturedApp("images/moon.jpg"));
                 box.setUserData(1);                           // set 'UserData' to a new value
             }
             else { //if they have been changed with the image then reset
-                app.setTexture(texturedApp("C:\\Users\\Shubham\\Desktop\\MarbleTexture.jpg"));
+                app.setTexture(texturedApp("images/MarbleTexture.jpg"));
                 box.setUserData(0);                           // reset 'UserData'
             }
             box.setAppearance(app);                           // change box's appearance
