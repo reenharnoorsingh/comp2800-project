@@ -224,7 +224,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
     }
 
     public static void main(String[] args) {
-        frame = new JFrame("SM's Assignment 4");
+        frame = new JFrame("Group Project");
         frame.getContentPane().add(new Project(createScene()));
     }
 
