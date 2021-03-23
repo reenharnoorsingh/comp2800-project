@@ -30,6 +30,10 @@ jobs:
       
       - name: PR Automation
         uses: devjoes/pr-automation@v0.1.0
+        
+      - name: Merge pull requests
+        uses: pascalgn/automerge-action@v0.13.1
+
 
       - name: Run a one-line script
         run: echo Main Branch Updated!
