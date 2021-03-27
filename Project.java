@@ -113,7 +113,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         return tg;
     }
 
-    private static TransformGroup LightPoles(){
+    private static TransformGroup LightPoles(){ //function that makes light poles
         TransformGroup tg=new TransformGroup();
         TransformGroup pole=new TransformGroup();
 
