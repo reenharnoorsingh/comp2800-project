@@ -4,7 +4,7 @@ Members:
         Harnoor Singh Reen - 110006294
         Shubham Mehta -
         Bill Shema -
-        Ariya Rasekh
+        Ariya Rasekh - 105127455
         Vaishnavi Alhuwalia -
  */
 
@@ -113,7 +113,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         return tg;
     }
 
-    private static TransformGroup LightPoles(){
+    private static TransformGroup LightPoles(){ //function that makes light poles
         TransformGroup tg=new TransformGroup();
         TransformGroup pole=new TransformGroup();
 
