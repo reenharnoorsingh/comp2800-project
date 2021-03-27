@@ -4,7 +4,7 @@ Members:
         Harnoor Singh Reen - 110006294
         Shubham Mehta -
         Bill Shema -
-        Ariya Rasekh
+        Ariya Rasekh - 105127455
         Vaishnavi Alhuwalia -
  */
 
