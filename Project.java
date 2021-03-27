@@ -163,6 +163,30 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         return tg;
     }
 
+    private BranchGroup createCar(){
+        BranchGroup objectRoot = new BranchGroup();
+        TransformGroup tg = new TransformGroup();
+        Transform3D tg3D = new Transform3D();
+
+        tg3D.setTranslation(new Vector3d(0.0, -0.725, -8.0));
+        tg3D.setRotation(new AxisAngle4f(0.0f, 1.0f, 0.0f, 0.35f));
+        tg3D.setScale(1.43);
+
+        tg.setTransform(tg3D);
+
+        //car = new MovingCar("model/car_orange.wrl");
+        //tg.addChild(car.tg);
+        // car.tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+
+        //tg.addChild(car);
+
+        objectRoot.addChild(tg);
+        //objectRoot.addChild(createLight());
+
+        objectRoot.compile();
+
+        return objectRoot;
+    }
 
     public void keyPressed(KeyEvent e){
         if((e.getKeyCode()==KeyEvent.VK_Z)){//if the key pressed is Z then change the rotation of largest sphere
