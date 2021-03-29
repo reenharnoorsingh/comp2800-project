@@ -3,7 +3,7 @@ Group Project COMP-2800
 Members:
         Harnoor Singh Reen - 110006294
         Shubham Mehta -
-        Bill Shema -
+        Bill Shema - 104822276
         Ariya Rasekh - 105127455
         Vaishnavi Alhuwalia - 110026852
  */
