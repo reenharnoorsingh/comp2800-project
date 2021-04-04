@@ -2,12 +2,17 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import org.jdesktop.j3d.examples.sound.audio.JOALMixer;
 import org.jogamp.java3d.*;
+import org.jogamp.java3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import org.jogamp.java3d.utils.geometry.ColorCube;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.Viewer;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.*;
 
-public class Commons extends JPanel {
+public class CommonsXY extends JPanel {
     private static final long serialVersionUID = 1L;
     public final static Color3f Red = new Color3f(1.0f, 0.0f, 0.0f);
     public final static Color3f Green = new Color3f(0.0f, 1.0f, 0.0f);
@@ -18,12 +23,16 @@ public class Commons extends JPanel {
     public final static Color3f Magenta = new Color3f(1.0f, 0.0f, 1.0f);
     public final static Color3f White = new Color3f(1.0f, 1.0f, 1.0f);
     public final static Color3f Grey = new Color3f(0.5f, 0.5f, 0.5f);
+    public final static Color3f None = new Color3f(0f, 0f, 0f);
     public final static Color3f[] Clrs = {Blue, Green, Red, Yellow,
             Cyan, Orange, Magenta, Grey};
     public final static int clr_num = 8;
 
     private static JFrame frame;
+    private static Canvas3D canvas_3D;
+    private static SimpleUniverse su = null;
     private static Point3d eye = new Point3d(1.35, 0.35, 2.0);
+    private static boolean k_tag = false;
 
     /* a function to create a rotation behavior and refer it to 'my_TG' */
     public static RotationInterpolator rotateBehavior(int r_num, TransformGroup my_TG) {
@@ -50,6 +59,21 @@ public class Commons extends JPanel {
         viewTransform.setTransform(view_TM);                 // set the TransformGroup of ViewingPlatform
     }
 
+    /* a function to enable audio device via JOAL */
+    public static void enableAudio(SimpleUniverse su) {
+
+        JOALMixer mixer = null;		                         // create a null mixer as a joalmixer
+        Viewer viewer = su.getViewer();
+        viewer.getView().setBackClipDistance(20.0f);         // make object(s) disappear beyond 20f
+
+        if (mixer == null && viewer.getView().getUserHeadToVworldEnable()) {
+            mixer = new JOALMixer(viewer.getPhysicalEnvironment());
+            if (!mixer.initialize()) {                       // add mixer as audio device if successful
+                System.out.println("Open AL failed to init");
+                viewer.getPhysicalEnvironment().setAudioDevice(null);
+            }
+        }
+    }
 
     /* a function to build the content branch and attach to 'scene' */
     private static BranchGroup createScene() {
@@ -67,12 +91,26 @@ public class Commons extends JPanel {
         eye = eye_position;
     }
 
-    /* a constructor to set up and run the application */
-    public Commons(BranchGroup sceneBG) {
+    public static void enableKeyNavigation() {
+        k_tag = true;
+    }
+
+    public static SimpleUniverse getSimpleU() {
+        return su;
+    }
+
+    public static void createUniverse() {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        Canvas3D canvas_3D = new Canvas3D(config);
-        SimpleUniverse su = new SimpleUniverse(canvas_3D);   // create a SimpleUniverse
+        canvas_3D = new Canvas3D(config);
+        su = new SimpleUniverse(canvas_3D);   // create a SimpleUniverse
         defineViewer(su);                                    // set the viewer's location
+    }
+
+    /* a constructor to set up and run the application */
+    public CommonsXY(BranchGroup sceneBG) {
+        createUniverse();
+        if (k_tag == true)
+            sceneBG.addChild(keyNavigation(su));                   // allow key navigation
 
         sceneBG.compile();
         su.addBranchGraph(sceneBG);                          // attach the scene to SimpleUniverse
@@ -85,15 +123,27 @@ public class Commons extends JPanel {
 
     public static void main(String[] args) {
         frame = new JFrame("XY's Commons");                  // call constructor with 'createScene()'
-        frame.getContentPane().add(new Commons(createScene()));
+        frame.getContentPane().add(new CommonsXY(createScene()));
     }
 
     public static class MyGUI extends JFrame {
         private static final long serialVersionUID = 1L;
         public MyGUI(BranchGroup branchGroup, String title) {
             frame = new JFrame(title);                       // call constructor with 'branchGroup'
-            frame.getContentPane().add(new Commons(branchGroup));
+            frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            frame.getContentPane().add(new CommonsXY(branchGroup));
             pack();
         }
+    }
+
+    /* LAB7: a function to allow key navigation with the ViewingPlateform */
+    private KeyNavigatorBehavior keyNavigation(SimpleUniverse simple_U) {
+
+        ViewingPlatform view_platfm = simple_U.getViewingPlatform();
+        TransformGroup view_TG = view_platfm.getViewPlatformTransform();
+        KeyNavigatorBehavior keyNavBeh = new KeyNavigatorBehavior(view_TG);
+        BoundingSphere view_bounds = new BoundingSphere(new Point3d(), 20.0);
+        keyNavBeh.setSchedulingBounds(view_bounds);
+        return keyNavBeh;
     }
 }
