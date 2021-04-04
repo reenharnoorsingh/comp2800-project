@@ -184,7 +184,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         //objectRoot.addChild(createLight());
 
         objectRoot.compile();
-
+ 
         return objectRoot;
     }
 
