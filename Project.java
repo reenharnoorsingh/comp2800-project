@@ -13,17 +13,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileNotFoundException;
+import java.util.Iterator;
+import java.util.Random;
 
 import javax.swing.*;
 
+import org.jdesktop.j3d.examples.collision.Box;
 import org.jogamp.java3d.*;
+import org.jogamp.java3d.loaders.IncorrectFormatException;
+import org.jogamp.java3d.loaders.ParsingErrorException;
+import org.jogamp.java3d.loaders.Scene;
+import org.jogamp.java3d.loaders.objectfile.ObjectFile;
+import org.jogamp.java3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
+import org.jogamp.java3d.utils.geometry.Cone;
 import org.jogamp.java3d.utils.geometry.Cylinder;
 import org.jogamp.java3d.utils.geometry.Primitive;
 import org.jogamp.java3d.utils.geometry.Sphere;
 import org.jogamp.java3d.utils.image.TextureLoader;
 import org.jogamp.java3d.utils.picking.PickResult;
 import org.jogamp.java3d.utils.picking.PickTool;
+import org.jogamp.java3d.utils.universe.PlatformGeometry;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.*;
 
 public class Project extends JPanel implements MouseListener, KeyListener {
@@ -32,18 +44,99 @@ public class Project extends JPanel implements MouseListener, KeyListener {
 
     private Canvas3D canvas;
     private static PickTool pickTool;
-    private static RotationInterpolator r1;
-    private static RotationInterpolator r2;
-    private static RotationInterpolator r3;
+    private static SoundUtilityJOAL soundJOAL;               // needed for sound
 
+
+    private static TransformGroup viewtrans;
+    private static TransformGroup tree1;
+    public class BehaviorArrowKey extends Behavior {
+        private TransformGroup navigatorTG;
+        private WakeupOnAWTEvent wEnter;
+
+        public BehaviorArrowKey(ViewingPlatform targetVP, TransformGroup chasedTG) {
+            navigatorTG = chasedTG;
+            targetVP.getViewPlatformTransform();
+        }
+
+        public void initialize() {
+            wEnter = new WakeupOnAWTEvent(KeyEvent.KEY_PRESSED);
+            wakeupOn(wEnter);                              // decide when behavior becomes live
+        }
+
+        public void processStimulus(Iterator<WakeupCriterion> criteria) {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(0,0,-0.03));
+            navigatorTG.getTransform(navigatorTF);
+            navigatorTF.mul(test);
+            navigatorTG.setTransform(navigatorTF);
+//            Vector3d vct = new Vector3d();
+//            navigatorTF.get(vct);                          // get position of 'navigatorTG'
+
+            wakeupOn(wEnter);                              // decide when behavior becomes live
+        }
+    }
+
+    public static void initialSound() {
+        soundJOAL = new SoundUtilityJOAL();
+        if (!soundJOAL.load("carInit", 0f, 0f, 10f, true))
+            System.out.println("Could not load " + "carInit");
+        if (!soundJOAL.load("carAcc", 0f, 0f, 10f, true))
+            System.out.println("Could not load " + "carAcc");
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
+        char key = e.getKeyChar();
+
+        if (key == 'w' || key=='W') {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(0,0,-0.3));
+            tree1.getTransform(navigatorTF);
+            navigatorTF.mul(test);
+            tree1.setTransform(navigatorTF);
+        }
+
+        if (key == 'a' || key == 'A') {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(-0.3,0,0));
+            tree1.getTransform(navigatorTF);
+            navigatorTF.mul(test);
+            tree1.setTransform(navigatorTF);
+        }
+
+        if (key == 's' || key == 'S') {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(0,0,0.3));
+            tree1.getTransform(navigatorTF);
+            navigatorTF.mul(test);
+            tree1.setTransform(navigatorTF);
+        }
+
+        if (key == 'd' || key == 'D') {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(0.3,0,0));
+            tree1.getTransform(navigatorTF);
+            navigatorTF.mul(test);
+            tree1.setTransform(navigatorTF);
+        }
+
+        if (key == 'r' || key == 'R') {
+            Transform3D navigatorTF = new Transform3D();   // get Transform3D from 'navigatorTG'
+            Transform3D test=new Transform3D();
+            test.set(new Vector3d(0.3,0,0));
+            tree1.getTransform(navigatorTF);
+            navigatorTF.set(new Vector3d(0,0,0));
+            tree1.setTransform(navigatorTF);
+        }
 
     }
     @Override
     public void keyReleased(KeyEvent e) {
-
     }
 
     private static Background addBackground(Color3f clr, BoundingSphere sphere){
@@ -76,6 +169,15 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         return mat;
     }
 
+    private static Appearance setApp(Color3f clr) {//function to set the appearance
+        Appearance app = new Appearance();
+        app.setMaterial(setMaterial(clr));
+        ColoringAttributes colorAtt = new ColoringAttributes();
+        colorAtt.setColor(clr);
+        app.setColoringAttributes(colorAtt);
+        return app;
+    }
+
     private static TransformGroup Road(){
         TransformGroup tg=new TransformGroup();
 
@@ -95,10 +197,10 @@ public class Project extends JPanel implements MouseListener, KeyListener {
 
 
         QuadArray road=new QuadArray(4,QuadArray.COORDINATES|QuadArray.COLOR_3|QuadArray.TEXTURE_COORDINATE_2);
-        road.setCoordinate(0,new Point3f(1,0,2));
-        road.setCoordinate(1,new Point3f(1,0,-18));
-        road.setCoordinate(2,new Point3f(-1,0,-18));
-        road.setCoordinate(3,new Point3f(-1,0,2));
+        road.setCoordinate(0,new Point3f(3f,-1,100));
+        road.setCoordinate(1,new Point3f(3f,-1,-100));
+        road.setCoordinate(2,new Point3f(-3f,-1,-100));
+        road.setCoordinate(3,new Point3f(-3f,-1,100));
         float uv0[]={0f,0f};
         float uv1[]={1f,0f};
         float uv2[]={1f,1f};
@@ -107,39 +209,41 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         road.setTextureCoordinate(0,1,uv1);
         road.setTextureCoordinate(0,2,uv2);
         road.setTextureCoordinate(0,3,uv3);
-
         tg.addChild(new Shape3D(road,app));
 
         return tg;
     }
 
-    private static TransformGroup LightPoles(){ //function that makes light poles
-        TransformGroup tg=new TransformGroup();
+    private static TransformGroup LightPoles(){
         TransformGroup pole=new TransformGroup();
+        TransformGroup poles=new TransformGroup();
+        TransformGroup tg=new TransformGroup();
+        pole.addChild(loadShape("images/lampPost.obj"));
+        Transform3D rotater=new Transform3D();
+        rotater.rotX(Math.PI/2);
+        pole.setTransform(rotater);
+        Transform3D scaled=new Transform3D();
+        scaled.setScale(1.5);
+        pole.setTransform(scaled);
 
-        Appearance app=new Appearance();
-        app.setMaterial(setMaterial(Commons.Grey));
-        Cylinder bot=new Cylinder(0.1f,1f,app);
-        Cylinder top=new Cylinder(0.1f,1f,app);
+        SpotLight myLight=new SpotLight();
+        myLight.setEnable(true);
+        myLight.setColor(Commons.White);
+        myLight.setPosition(new Point3f(new Point3d(0.7,1.5f,0)));
+        myLight.setAttenuation(new Point3f(1,0,0));
+        myLight.setDirection(new Vector3f(0,-1,0));
+        myLight.setSpreadAngle(0.785f);
+        myLight.setConcentration(3f);
+        myLight.setInfluencingBounds(new BoundingSphere(new Point3d(),1000));
 
-        TransformGroup topTG=new TransformGroup();
-        TransformGroup botTG=new TransformGroup();
-
-        topTG.addChild(top);
-        botTG.addChild(bot);
-
-        Transform3D rot=new Transform3D();
-        rot.rotZ(Math.PI/4 + Math.PI/2);
-        rot.setTranslation(new Vector3f(0.37f,1.25f,0f));
-        topTG.setTransform(rot);
-
-        Transform3D move2=new Transform3D();
-        move2.setTranslation(new Vector3f(0,0.5f,0));
-        botTG.setTransform(move2);
-
-
-        pole.addChild(topTG);
-        pole.addChild(botTG);
+        TransformGroup sp=new TransformGroup();
+        Transform3D spSet=new Transform3D();
+        spSet.setTranslation(new Vector3f(0.27f,0.76f,0));
+        sp.setTransform(spSet);
+        Sphere sphere=new Sphere(0.1f, Sphere.GENERATE_NORMALS,80);
+        sphere.setAppearance(setApp(Commons.White));
+        sp.addChild(sphere);
+        pole.addChild(sp);
 
         SharedGroup shared = new SharedGroup();
         shared.addChild(pole);
@@ -147,13 +251,13 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         TransformGroup tg_link = null;
         Transform3D t3d_link = new Transform3D();
 
-        for (float x = -2.50f; x <= 2.50f; x += 5.0f) {
-            for (float z = -400f; z <= 20f; z += 5.0f) {
+        for (float x = -2.9f; x <= 2.9f; x += 5.8f) {
+            for (float z = -100f; z <= 100f; z += 5.0f) {
 
                 t3d_link.setScale(1);
-                if(x!=-2.50f)
+                if(x!=-2.9f)
                     t3d_link.rotY(Math.PI);
-                t3d_link.setTranslation(new Vector3d(x, -1.5, z));
+                t3d_link.setTranslation(new Vector3d(x, 0.4, z));
                 tg_link = new TransformGroup(t3d_link);
 
                 tg_link.addChild(new Link(shared));
@@ -163,84 +267,191 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         return tg;
     }
 
-    private BranchGroup createCar(){
-        BranchGroup objectRoot = new BranchGroup();
-        TransformGroup tg = new TransformGroup();
-        Transform3D tg3D = new Transform3D();
+    private  static TransformGroup SurroundAreaLeft(){
+        TransformGroup tg=new TransformGroup();
 
-        tg3D.setTranslation(new Vector3d(0.0, -0.725, -8.0));
-        tg3D.setRotation(new AxisAngle4f(0.0f, 1.0f, 0.0f, 0.35f));
-        tg3D.setScale(1.43);
+        Appearance app=new Appearance();
+        app.setTexture(texturedApp("images/soil.jpg"));
+        PolygonAttributes pa=new PolygonAttributes();
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
+        app.setPolygonAttributes(pa);
+        TextureAttributes ta=new TextureAttributes();
+        ta.setTextureMode(TextureAttributes.REPLACE);
+        app.setTextureAttributes(ta);
+        Vector3d scaling=new Vector3d(1,1,8);
+        Transform3D trans=new Transform3D();
+        trans.setScale(scaling);
+        ta.setTextureTransform(trans);
 
-        tg.setTransform(tg3D);
 
-        //car = new MovingCar("model/car_orange.wrl");
-        //tg.addChild(car.tg);
-        // car.tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        QuadArray surround=new QuadArray(4,QuadArray.COORDINATES|QuadArray.COLOR_3|QuadArray.TEXTURE_COORDINATE_2);
+        surround.setCoordinate(0,new Point3f(-3f,-1,100));
+        surround.setCoordinate(1,new Point3f(-3f,-1,-100));
+        surround.setCoordinate(2,new Point3f(-11f,-1,-100));
+        surround.setCoordinate(3,new Point3f(-11f,-1,100));
+        float uv0[]={0f,0f};
+        float uv1[]={1f,0f};
+        float uv2[]={1f,1f};
+        float uv3[]={0f,1f};
+        surround.setTextureCoordinate(0,0,uv0);
+        surround.setTextureCoordinate(0,1,uv1);
+        surround.setTextureCoordinate(0,2,uv2);
+        surround.setTextureCoordinate(0,3,uv3);
+        tg.addChild(new Shape3D(surround,app));
 
-        //tg.addChild(car);
+        return tg;
+    }
 
-        objectRoot.addChild(tg);
-        //objectRoot.addChild(createLight());
+    private  static TransformGroup SurroundAreaRight(){
+        TransformGroup tg=new TransformGroup();
 
-        objectRoot.compile();
- 
-        return objectRoot;
+        Appearance app=new Appearance();
+        app.setTexture(texturedApp("images/soil.jpg"));
+        PolygonAttributes pa=new PolygonAttributes();
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
+        app.setPolygonAttributes(pa);
+        TextureAttributes ta=new TextureAttributes();
+        ta.setTextureMode(TextureAttributes.REPLACE);
+        app.setTextureAttributes(ta);
+        Vector3d scaling=new Vector3d(1,1,8);
+        Transform3D trans=new Transform3D();
+        trans.setScale(scaling);
+        ta.setTextureTransform(trans);
+
+
+        QuadArray surround=new QuadArray(4,QuadArray.COORDINATES|QuadArray.COLOR_3|QuadArray.TEXTURE_COORDINATE_2);
+        surround.setCoordinate(0,new Point3f(3f,-1,100));
+        surround.setCoordinate(1,new Point3f(3f,-1,-100));
+        surround.setCoordinate(2,new Point3f(11f,-1,-100));
+        surround.setCoordinate(3,new Point3f(11f,-1,100));
+        float uv0[]={0f,0f};
+        float uv1[]={1f,0f};
+        float uv2[]={1f,1f};
+        float uv3[]={0f,1f};
+        surround.setTextureCoordinate(0,0,uv0);
+        surround.setTextureCoordinate(0,1,uv1);
+        surround.setTextureCoordinate(0,2,uv2);
+        surround.setTextureCoordinate(0,3,uv3);
+        tg.addChild(new Shape3D(surround,app));
+
+        return tg;
+    }
+
+    private static TransformGroup loadShape(String st) {//this is the function we added to load the cow object
+        int flags= ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY;
+        ObjectFile f=new ObjectFile(flags, (float)(60*Math.PI/180.0));
+        Scene s=null;
+        try {
+            s=f.load(st);//loading the image
+        }
+        catch(FileNotFoundException e) {//handling exception
+            System.err.println(e);
+            System.exit(1);
+        }
+        catch(ParsingErrorException e) {//handling exception
+            System.err.println(e);
+            System.exit(1);
+        }
+        catch(IncorrectFormatException e) {//handling exception
+            System.err.println(e);
+            System.exit(1);
+        }
+        BranchGroup bg=s.getSceneGroup();
+        Shape3D cows=(Shape3D)bg.getChild(0);//getting the shape
+        if(st=="images/model.obj"){
+            Random rand=new Random();
+            int r=rand.nextInt(7);
+            cows.setAppearance(setApp(Commons.Clrs[r]));
+        }
+        else
+            cows.setAppearance(setApp(CommonsXY.Yellow));//setting an appearance to the shape to change its color
+        TransformGroup loadedShape=new TransformGroup();
+        loadedShape.addChild(bg);//ADDING THE SHAPE TO THE TG
+        Transform3D rot=new Transform3D();//transformation to rotate the object
+        Transform3D scale=new Transform3D();//transformation to change the scale
+        scale.setScale(0.4);
+        rot.rotX(3*Math.PI/2);
+        rot.mul(scale);
+        return loadedShape;
+    }
+
+    public TransformGroup Car(SimpleUniverse su){
+        TransformGroup tg =new TransformGroup();
+
+        tree1=new TransformGroup();
+        TransformGroup car=new TransformGroup();
+        car.addChild(loadShape("images/model.obj"));
+        Transform3D rotCar=new Transform3D();
+        rotCar.rotY(Math.PI/3.4);
+        car.setTransform(rotCar);
+        tree1.addChild(car);
+        tree1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//        ViewingPlatform ourView = su.getViewingPlatform();
+//        KeyNavigatorBehavior  myRotationbehavior = new KeyNavigatorBehavior(tree1);
+//        BehaviorArrowKey myViewRotationbehavior = new BehaviorArrowKey(ourView, tree1);
+//        myRotationbehavior.setSchedulingBounds(new BoundingSphere());
+//        tree1.addChild(myRotationbehavior);
+//        myViewRotationbehavior.setSchedulingBounds(new BoundingSphere());
+//        tree1.addChild(myViewRotationbehavior);
+        tg.addChild(tree1);
+
+        return tg;
     }
 
     public void keyPressed(KeyEvent e){
-        if((e.getKeyCode()==KeyEvent.VK_Z)){//if the key pressed is Z then change the rotation of largest sphere
-            long r=r1.getAlpha().getIncreasingAlphaDuration();//get the inc alpha value
-            if(r==10000)//if its spinning then make it stop
-                r1.setAlpha(new Alpha(-1,0));
-            else //if its stopped then start spinning again
-                r1.setAlpha(new Alpha(-1,10000));
-        }
-        if((e.getKeyCode()==KeyEvent.VK_X)){//if key presesd is X do the same thing but for the medium sphere
-            long r=r2.getAlpha().getIncreasingAlphaDuration();
-            if(r==5000)
-                r2.setAlpha(new Alpha(-1,0));
-            else
-                r2.setAlpha(new Alpha(-1,5000));
-        }
-        if((e.getKeyCode()==KeyEvent.VK_C)){// if key pressed is c then change the rotation for the smallest sphere
-            long r=r3.getAlpha().getIncreasingAlphaDuration();
-            if(r==2500)
-                r3.setAlpha(new Alpha(-1,0));
-            else
-                r3.setAlpha(new Alpha(-1,2500));
-        }
+//        char c=e.getKeyChar();
+//        if(c=='w' || c=='a' || c=='s' || c=='d')
+//            System.out.println("asdasd");
     }
 
+    private KeyNavigatorBehavior keyNavigation(SimpleUniverse simple_U){
+        ViewingPlatform view_plat=simple_U.getViewingPlatform();
+        TransformGroup view_TG=view_plat.getViewPlatformTransform();
+        KeyNavigatorBehavior keyNavBeh=new KeyNavigatorBehavior(view_TG);
+        BoundingSphere view_bounds=new BoundingSphere(new Point3d(),20);
+        keyNavBeh.setSchedulingBounds(view_bounds);
+        return  keyNavBeh;
+    }
 
     /* a function to create and return the scene BranchGroup */
-    public static BranchGroup createScene() {
+    public BranchGroup createScene(SimpleUniverse su) {
         BranchGroup sceneBG = new BranchGroup();
-        sceneBG.addChild(Road());
-        sceneBG.addChild(LightPoles());
-        sceneBG.addChild(addBackground(Commons.Grey, new BoundingSphere()));	///add Background
+        TransformGroup sceneTG=new TransformGroup();
+        sceneBG.addChild(sceneTG);
+        sceneTG.addChild(Road());
+        sceneTG.addChild(Car(su));
+        sceneTG.addChild(SurroundAreaLeft());
+        sceneTG.addChild(SurroundAreaRight());
+        sceneTG.addChild(LightPoles());
+        //sceneBG.addChild(addBackground(CommonsSM.Grey, new BoundingSphere()));	///add Background
         pickTool = new PickTool( sceneBG );                   // allow picking of objs in 'sceneBG'
         pickTool.setMode(PickTool.BOUNDS);
 
         return sceneBG;
     }
 
+
     /* a constructor to set up and run the application */
-    public Project(BranchGroup sceneBG) {
+    public Project() {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         canvas = new Canvas3D(config);
+        initialSound();
         canvas.addMouseListener(this);                        // NOTE: enable mouse clicking
         canvas.addKeyListener(this);
-
         SimpleUniverse su = new SimpleUniverse(canvas);       // create a SimpleUniverse
-        Commons.setEye(new Point3d(0, 1, 5.0));
+        Commons.setEye(new Point3d(0, 2, 10.0));
         Commons.defineViewer(su);                           // set the viewer's location
 
-        addLights(sceneBG, Commons.White);
+        BranchGroup sceneBG=createScene(su);
+//        sceneBG.addChild(keyNavigation(su));
+        addLights(sceneBG, Commons.White,new Point3f(4,3,100));
+        addLights(sceneBG, Commons.White,new Point3f(4,3,0));
+        addLights(sceneBG, Commons.White,new Point3f(4,3,-50));
+
+        soundJOAL.play("carInit");
 
         sceneBG.compile();
         su.addBranchGraph(sceneBG);                           // attach the scene to SimpleUniverse
-
         setLayout(new BorderLayout());
         add("Center", canvas);
         frame.setSize(600, 600);                              // set the size of the JFrame
@@ -248,8 +459,8 @@ public class Project extends JPanel implements MouseListener, KeyListener {
     }
 
     public static void main(String[] args) {
-        frame = new JFrame("Group Project");
-        frame.getContentPane().add(new Project(createScene()));
+        frame = new JFrame("Group Project 6M");
+        frame.getContentPane().add(new Project());
     }
 
     @Override
@@ -297,12 +508,12 @@ public class Project extends JPanel implements MouseListener, KeyListener {
     public void mouseReleased(MouseEvent e) { }
 
     /* a function to add ambient light and a point light to 'sceneBG' */
-    public static void addLights(BranchGroup sceneBG, Color3f clr) {
+    public static void addLights(BranchGroup sceneBG, Color3f clr, Point3f point) {
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 100.0);
         AmbientLight amLgt = new AmbientLight(new Color3f(0.2f, 0.2f, 0.2f));
         amLgt.setInfluencingBounds(bounds);
         sceneBG.addChild(amLgt);
-        Point3f pt  = new Point3f(2.0f, 2.0f, 2.0f);
+        Point3f pt  = new Point3f(point);
         Point3f atn = new Point3f(1.0f, 0.0f, 0.0f);
         PointLight ptLight = new PointLight(clr, pt, atn);
         ptLight.setInfluencingBounds(bounds);
