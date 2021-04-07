@@ -16,9 +16,7 @@ import java.awt.event.MouseListener;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Random;
-
 import javax.swing.*;
-
 import org.jdesktop.j3d.examples.collision.Box;
 import org.jogamp.java3d.*;
 import org.jogamp.java3d.loaders.IncorrectFormatException;
@@ -344,15 +342,15 @@ public class Project extends JPanel implements MouseListener, KeyListener {
         try {
             s=f.load(st);//loading the image
         }
-        catch(FileNotFoundException e) {//handling exception
+        catch(FileNotFoundException e) {//handling exceptions
             System.err.println(e);
             System.exit(1);
         }
-        catch(ParsingErrorException e) {//handling exception
+        catch(ParsingErrorException e) {//handling exceptions
             System.err.println(e);
             System.exit(1);
         }
-        catch(IncorrectFormatException e) {//handling exception
+        catch(IncorrectFormatException e) {//handling exceptions
             System.err.println(e);
             System.exit(1);
         }
@@ -507,7 +505,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
     public void mousePressed(MouseEvent e) { }
     public void mouseReleased(MouseEvent e) { }
 
-    /* a function to add ambient light and a point light to 'sceneBG' */
+    /* a function to add ambient light and a point light to the 'sceneBG' */
     public static void addLights(BranchGroup sceneBG, Color3f clr, Point3f point) {
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 100.0);
         AmbientLight amLgt = new AmbientLight(new Color3f(0.2f, 0.2f, 0.2f));
