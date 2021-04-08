@@ -2,7 +2,7 @@
 Group Project COMP-2800
 Members:
         Harnoor Singh Reen - 110006294
-        Shubham Mehta -
+        Shubham Mehta - 110027013
         Bill Shema - 104822276
         Ariya Rasekh - 105127455
         Vaishnavi Alhuwalia - 110026852
@@ -1058,7 +1058,7 @@ public class Project extends JPanel implements MouseListener, KeyListener {
     }
 
     public static void main(String[] args) {
-        frame = new JFrame("Help");
+        frame = new JFrame("Group Project 6M");
         Project p=new Project();
         frame.getContentPane().add(p);
 //        BranchGroup b=new BranchGroup();
