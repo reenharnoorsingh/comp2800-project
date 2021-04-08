@@ -1,11 +1,12 @@
-import java.awt.BorderLayout;
-import java.awt.GraphicsConfiguration;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.geometry.ColorCube;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
-import org.jogamp.vecmath.*;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class Commons extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -18,7 +19,7 @@ public class Commons extends JPanel {
     public final static Color3f Magenta = new Color3f(1.0f, 0.0f, 1.0f);
     public final static Color3f White = new Color3f(1.0f, 1.0f, 1.0f);
     public final static Color3f Grey = new Color3f(0.5f, 0.5f, 0.5f);
-    public final static Color3f[] Clrs = {Blue, Green, Red, Yellow,
+    public final static Color3f[] Clrs = {Green,Blue, Red, Yellow,
             Cyan, Orange, Magenta, Grey};
     public final static int clr_num = 8;
 
@@ -53,6 +54,7 @@ public class Commons extends JPanel {
 
     /* a function to build the content branch and attach to 'scene' */
     private static BranchGroup createScene() {
+
         BranchGroup scene = new BranchGroup();
 
         TransformGroup content_TG = new TransformGroup();    // create a TransformGroup (TG)
@@ -65,6 +67,10 @@ public class Commons extends JPanel {
 
     public static void setEye(Point3d eye_position) {
         eye = eye_position;
+    }
+
+    public static Point3d getEye(){
+        return eye;
     }
 
     /* a constructor to set up and run the application */
@@ -84,7 +90,7 @@ public class Commons extends JPanel {
     }
 
     public static void main(String[] args) {
-        frame = new JFrame("XY's Commons");                  // call constructor with 'createScene()'
+        frame = new JFrame("Commons");                  // call constructor with 'createScene()'
         frame.getContentPane().add(new Commons(createScene()));
     }
 
